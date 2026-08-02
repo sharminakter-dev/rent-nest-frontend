@@ -3,22 +3,10 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import jwt, { JwtPayload } from "jsonwebtoken"
+import { LoginState, RegisterState } from "@/lib/types"
 
-type LoginState = {
-    success: boolean,
-    statusCode: number,
-    message: string,
-    data: {
-        accessToken: string,
-        refreshToken: string
-    } | null;
 
-  errors: {
-    email?: string;
-    password?: string;
-    submit?: string;
-  };
-}
+
 // redirectTo: string, 
 export const loginAction = async(prevState: LoginState, formData: FormData)=>{
 
@@ -89,6 +77,88 @@ export const loginAction = async(prevState: LoginState, formData: FormData)=>{
         }else if(decodedToken.role === "LANDLORD"){
             redirect("/landload-dashboard", "replace");
         }else if(decodedToken.role === "ADMIN"){
+            redirect("/admin-dashboard", "replace");
+        }
+
+    }
+
+    return result;
+
+}
+
+
+export const registerAction = async(prevState: RegisterState, formData: FormData)=>{
+
+
+
+    const name = String(formData.get("name") || "");
+    const email = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
+    const role = String(formData.get("role") || "");
+    const profilePhoto = formData.get("profilePhoto");
+
+    const errors: Record<string, string> = {};
+
+    if (!name) {
+      errors.name = 'Name is required'
+    }
+
+    if (!email) {
+      errors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = 'Please enter a valid email'
+    }
+
+    if (!password) {
+      errors.password = 'Password is required'
+    }
+
+    if (!role) {
+      errors.role = 'Select A Role'
+    }
+
+    if (Object.keys(errors).length > 0) {
+        return {
+            success: false,
+            statusCode: 400,
+            message: "Validation failed",
+            data: null,
+            errors,
+        };
+    }
+
+
+    const payload = {
+        name,
+        email, 
+        password,
+        role,
+        profilePhoto 
+
+    }
+
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/auth/register`,{
+        method: "POST",
+        headers:{
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+  
+    if(result.success){
+        
+
+        // if(redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")){
+        //     redirect(redirectTo);
+        // }
+
+        if(role === "TENANT"){
+            redirect("/tenant-dashboard", "replace");
+        }else if(role === "LANDLORD"){
+            redirect("/landlord-dashboard", "replace");
+        }else if(role === "ADMIN"){
             redirect("/admin-dashboard", "replace");
         }
 
