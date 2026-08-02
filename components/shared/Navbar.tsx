@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -15,10 +15,9 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#properties', label: 'Properties' },
-    { href: '#about', label: 'About' },
-    { href: '#contact', label: 'Contact' },
+    { href: '/properties', label: 'Properties' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
   ]
 
   return (
@@ -50,10 +49,15 @@ export function Navbar() {
 
         {/* Desktop Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            Sign In
-          </Button>
-          <Button size="sm">Sign Up</Button>
+          <Link href={"/login"}>
+            <Button variant="outline" size="sm" className="cursor-pointer">
+              Sign In
+            </Button>
+          </Link>
+
+          <Link href={"/register"}>
+            <Button size="sm">Sign Up</Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Sheet */}
@@ -84,10 +88,14 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-6 space-y-3 border-t pt-4">
-                <Button variant="outline" className="w-full">
-                  Sign In
-                </Button>
-                <Button className="w-full">Sign Up</Button>
+                <Link href={"/login"}>
+                  <Button variant="outline" className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href={"/register"}>
+                  <Button className="w-full">Sign Up</Button>
+                </Link>
               </div>
             </div>
           </SheetContent>
