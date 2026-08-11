@@ -4,10 +4,7 @@ import Link from 'next/link';
 
 const page = async () => {
 
-  const data = await fetch(`${process.env.BACKEND_API_URL}/api/properties`);
-  const properties = await data.json();
 
-  console.log(properties);
 
   return (
     <div>
@@ -43,7 +40,7 @@ const page = async () => {
       </section>
 
       {/* Properties */}
-      <p>{properties[1]}</p>
+      <p className="bg-black text-white"></p>
 
     </div>
   )

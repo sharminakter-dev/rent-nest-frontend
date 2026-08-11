@@ -7,7 +7,6 @@ export default function PublicDashboard({
 }) {
   return (
       <div>
-        <Navbar/>
         {children}
       </div>
 

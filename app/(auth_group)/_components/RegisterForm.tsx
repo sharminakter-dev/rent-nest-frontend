@@ -83,6 +83,23 @@ const RegisterForm = () => {
                 )}
               </div>
 
+               {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">
+                  Phone (*optional)
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    id="phonr"
+                    name="phonr"
+                    type="phonr"
+                    placeholder="Your Pnone No.."
+                    className="pl-10 h-10"
+                  />
+                </div>
+              </div>
+
               {/* Password Field */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

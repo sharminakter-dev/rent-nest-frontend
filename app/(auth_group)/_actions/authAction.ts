@@ -75,7 +75,7 @@ export const loginAction = async(prevState: LoginState, formData: FormData)=>{
         if(decodedToken.role === "TENANT"){
             redirect("/tenant-dashboard", "replace");
         }else if(decodedToken.role === "LANDLORD"){
-            redirect("/landload-dashboard", "replace");
+            redirect("/landlord-dashboard", "replace");
         }else if(decodedToken.role === "ADMIN"){
             redirect("/admin-dashboard", "replace");
         }
@@ -89,13 +89,12 @@ export const loginAction = async(prevState: LoginState, formData: FormData)=>{
 
 export const registerAction = async(prevState: RegisterState, formData: FormData)=>{
 
-
-
     const name = String(formData.get("name") || "");
     const email = String(formData.get("email") || "").trim();
     const password = String(formData.get("password") || "");
     const role = String(formData.get("role") || "");
     const profilePhoto = formData.get("profilePhoto");
+    const phone = formData.get("phone");
 
     const errors: Record<string, string> = {};
 
@@ -133,8 +132,8 @@ export const registerAction = async(prevState: RegisterState, formData: FormData
         email, 
         password,
         role,
-        profilePhoto 
-
+        profilePhoto,
+        phone
     }
 
     const res = await fetch(`${process.env.BACKEND_API_URL}/api/auth/register`,{

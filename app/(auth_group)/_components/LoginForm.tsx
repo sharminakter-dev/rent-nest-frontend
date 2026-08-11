@@ -77,7 +77,6 @@ const LoginForm = () => {
               >
                 {pending ? (
                   <>
-                    <span className="inline-block animate-spin mr-2">⏳</span>
                     Signing in...
                   </>
                 ) : (
