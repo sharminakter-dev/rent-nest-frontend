@@ -1,6 +1,7 @@
 import MotionHouse from '@/components/page/home/MotionHouse';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { PropertyCard } from './_components/PropertyCard';
 
 const page = async () => {
 
@@ -39,8 +40,75 @@ const page = async () => {
         </div>
       </section>
 
-      {/* Properties */}
-      <p className="bg-black text-white"></p>
+      {/* Featured Properties Section */}
+      <section className="mx-auto max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
+                <div className="mb-12">
+          <h2 className="text-3xl font-bold tracking-tight">Featured Properties</h2>
+          <p className="mt-2 text-muted-foreground">
+            Explore our handpicked selection of premium rental properties
+          </p>
+        </div>
+            <div className="flex items-center justify-between">
+              
+              <PropertyCard/>
+            </div>
+        
+      </section>
+
+
+      {/* How It Works Section */}
+      <section className="bg-muted/30 mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold tracking-tight">How RentNest Works</h2>
+        </div>
+
+        <div className="grid gap-8 md:grid-cols-3">
+          {[
+            {
+              title: 'Browse',
+              description: 'Explore a wide variety of rental properties across different locations and price ranges.'
+            },
+            {
+              title: 'Request',
+              description: 'Send a rental request to your desired property and wait for landlord approval.'
+            },
+            {
+              title: 'Pay & Move',
+              description: 'Complete the payment process securely and get access to your new rental home.'
+            }
+          ].map((step, index) => (
+            <div key={index} className="relative">
+              <div className="mb-4">
+                <div className="flex items-center justify-center size-12 rounded-lg bg-primary text-primary-foreground font-bold text-lg">
+                  {index + 1}
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold">{step.title}</h3>
+              <p className="mt-2 text-muted-foreground">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+       {/* CTA Section */}
+      <section className='bg-black'>
+        <div className="rounded-lg bg-primary px-6 py-12 text-center sm:px-12">
+          <h2 className="text-3xl font-bold text-primary-foreground">
+            Ready to find your perfect rental?
+          </h2>
+          <p className="mt-3 text-lg text-primary-foreground/90">
+            Join thousands of happy tenants and landlords on RentNest
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button size="lg" variant="secondary">
+              <Link href="/auth/register?role=tenant">Start as a Tenant</Link>
+            </Button>
+            <Button size="lg" variant="secondary">
+              <Link href="/auth/register?role=landlord">List Your Property</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
 
     </div>
   )

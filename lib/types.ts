@@ -48,7 +48,7 @@ export type RegisterState = {
     statusCode: number,
     message: string,
     data: {
-       result: User
+       result: IUser
     } | null;
 
   errors: {
@@ -58,4 +58,31 @@ export type RegisterState = {
     role?: string;
     submit?: string;
   };
+}
+
+export interface IProperty {
+  id: string;
+  title: string;
+  description: string;
+  image: string | null;
+  location: string;
+  bedrooms: number;
+  bathrooms: number;
+  rent: string;
+  isAvailable: boolean;
+  isFeatured: boolean;
+  landlordId: string;
+  categoryId: string;
+  createdAt: string;
+  updatedAt: string;
+
+  landlord: {
+    name: string;
+  };
+
+  category: {
+    slug: string;
+  };
+
+  reviews: unknown[];
 }
