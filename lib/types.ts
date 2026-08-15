@@ -84,5 +84,7 @@ export interface IProperty {
     slug: string;
   };
 
-  reviews: unknown[];
+  reviews: {
+    rating: number
+  };
 }

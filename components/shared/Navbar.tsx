@@ -19,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { UserDropdown } from './UserDropdown'
 import { NavbarProps } from '@/lib/types'
 import { logout } from '@/service/logOut'
 import { toast } from 'sonner'

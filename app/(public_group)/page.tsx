@@ -2,10 +2,13 @@ import MotionHouse from '@/components/page/home/MotionHouse';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PropertyCard } from './_components/PropertyCard';
+import { getAllProperties } from './_actions/propertyActions';
+import { IProperty } from '@/lib/types';
 
 const page = async () => {
 
-
+  const properties = await getAllProperties();
+  console.log(properties)
 
   return (
     <div>
@@ -41,18 +44,25 @@ const page = async () => {
       </section>
 
       {/* Featured Properties Section */}
-      <section className="mx-auto max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
-                <div className="mb-12">
+      <section id="featured" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-12">
           <h2 className="text-3xl font-bold tracking-tight">Featured Properties</h2>
           <p className="mt-2 text-muted-foreground">
             Explore our handpicked selection of premium rental properties
           </p>
         </div>
-            <div className="flex items-center justify-between">
-              
-              <PropertyCard/>
-            </div>
-        
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {properties.map((property : IProperty) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Button size="lg" variant="outline" >
+            <Link href="/properties">View All Properties</Link>
+          </Button>
+        </div>
       </section>
 
 
