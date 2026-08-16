@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { getPropertyById } from '../../_actions/propertyActions'
+import { IReview } from '@/lib/types'
 
 interface PropertiesByIdPageProps {
   params: Promise<{ id: string }>
@@ -33,15 +34,21 @@ interface PropertiesByIdPageProps {
 export default async function PropertiesByIdPage({
   params,
 }: PropertiesByIdPageProps) {
-  const { id } = await params
+  const { id } = await params;
   const property = await getPropertyById(id);
 
   if (!property) {
     notFound()
   }
 
-  const landlordName = property.landlord?.name ?? 'RentNest landlord'
-  const amenities = property.amenities ?? []
+  const landlordName = property.landlord?.name ?? 'RentNest landlord';
+  const amenities = property.amenities ?? [];
+
+  const reviews = property.reviews ?? []
+  const reviewCount = reviews.length
+  const averageRating = reviewCount > 0
+    ? reviews.reduce((sum: number, r: IReview) => sum + r.rating, 0) / reviewCount
+    : 0
 
   return (
     <main className="min-h-screen bg-background">
@@ -50,6 +57,7 @@ export default async function PropertiesByIdPage({
           variant="ghost"
           className="w-fit gap-2 px-0"
           render={<Link href="/properties" />}
+          nativeButton={false}
         >
           <ArrowLeft data-icon="inline-start" />
           Back to properties
@@ -62,7 +70,7 @@ export default async function PropertiesByIdPage({
               <div className="relative z-10 flex w-full items-end justify-between gap-4">
                 <div>
                   <Badge variant="secondary" className="mb-3">
-                    {property.available === false ? 'Currently rented' : 'Available now'}
+                    {property.isAvailable === false ? 'Currently rented' : 'Available now'}
                   </Badge>
                   <p className="max-w-md text-sm text-muted-foreground">
                     Property preview for {property.title}
@@ -126,6 +134,34 @@ export default async function PropertiesByIdPage({
                 ))}
               </div>
             </section>
+
+
+            <section className="flex flex-col gap-4">
+              <h2 className="text-xl font-semibold">Reviews</h2>
+              {reviewCount > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {reviews.map((review: IReview, index: number) => (
+                    <div key={index} className="rounded-lg border p-4">
+                      <div className="flex items-center gap-1 mb-2">
+                        {Array.from({ length: 5 }).map((_, starIndex) => (
+                          <Star
+                            key={starIndex}
+                            className={
+                              starIndex < review.rating
+                                ? 'fill-current text-amber-500 size-4'
+                                : 'text-muted-foreground size-4'
+                            }
+                          />
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No reviews yet.</p>
+              )}
+            </section>
           </div>
 
           <Card className="lg:sticky lg:top-24">
@@ -137,8 +173,14 @@ export default async function PropertiesByIdPage({
                 </div>
                 <div className="flex items-center gap-1 text-sm">
                   <Star className="fill-current text-amber-500" />
-                  <span className="font-medium">{property.reviews.rating}</span>
-                  <span className="text-muted-foreground">({property.reviews} reviews)</span>
+                  {
+                    reviewCount > 0 ?
+                    <>
+                    <span className="font-medium">{averageRating.toFixed(1)}</span>
+                    <span className="text-muted-foreground">({reviewCount} reviews)</span>
+                    </> :
+                    <span className="text-muted-foreground">(No Reviews)</span>
+                  }
                 </div>
               </div>
             </CardHeader>
@@ -165,6 +207,7 @@ export default async function PropertiesByIdPage({
                 className="w-full"
                 size="lg"
                 render={<Link href={`/auth/login?redirect=/properties/${property.id}`} />}
+                nativeButton={false}
               >
                 Request this property
               </Button>

@@ -8,7 +8,6 @@ import { IProperty } from '@/lib/types';
 const page = async () => {
 
   const properties = await getAllProperties();
-  console.log(properties)
 
   return (
     <div>

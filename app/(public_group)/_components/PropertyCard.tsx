@@ -2,10 +2,10 @@
 
 import { IProperty } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { MapPin, Star, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 
 interface PropertyCardProps {
@@ -13,6 +13,13 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
+
+  const reviews = property.reviews ?? []
+  const reviewCount = reviews.length
+  const averageRating = reviewCount > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
+    : 0
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       {/* Image Container */}
@@ -50,11 +57,11 @@ export function PropertyCard({ property }: PropertyCardProps) {
             <p className="text-xs text-muted-foreground">per month</p>
           </div>
           <div className="flex items-center gap-1">
-            {property.reviews.rating ? (
+            {reviewCount > 0 ? (
                 <div className="flex items-center gap-1">
                   <Star className="size-4 fill-amber-400 text-amber-400" />
                   <span className="text-sm font-medium">
-                    {property.reviews.rating}
+                    {averageRating}
                   </span>
                 </div>
               ) : (

@@ -84,7 +84,11 @@ export interface IProperty {
     slug: string;
   };
 
-  reviews: {
-    rating: number
-  };
+  reviews: IReview[];
 }
+
+export interface IReview {
+  rating: number
+  comment: string
+}
+
