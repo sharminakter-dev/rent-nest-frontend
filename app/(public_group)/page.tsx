@@ -1,13 +1,15 @@
 import MotionHouse from '@/components/page/home/MotionHouse';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { PropertyCard } from './_components/PropertyCard';
+import { PropertyCard } from './_components/property/PropertyCard';
 import { getAllProperties } from './_actions/propertyActions';
 import { IProperty } from '@/lib/types';
 
 const page = async () => {
 
-  const properties = await getAllProperties();
+  const properties = await getAllProperties({
+    query: { isFeatured: "true" },
+  });
 
   return (
     <div>

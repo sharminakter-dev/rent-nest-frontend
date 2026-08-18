@@ -30,6 +30,6 @@
     "**/*.mts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "app/(public_group)/_components/property/PropertySkeleton.tsx"  ],
   "exclude": ["node_modules"]
 }

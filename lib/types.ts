@@ -92,3 +92,6 @@ export interface IReview {
   comment: string
 }
 
+export type PropertySearchBarProps = {
+  propertyCategories: string[];
+};
