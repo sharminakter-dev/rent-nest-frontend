@@ -95,11 +95,15 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div> */}
 
         {/* CTA Button */}
-        <Button className="w-full">
-          <Link href={`/properties/${property.id}`}>
-            View Property
-          </Link>
+        <Button
+          className="w-full"
+          render={<Link href={`/properties/${property.id}`} />}
+          nativeButton={false}
+        >
+         View Property
         </Button>
+
+        
       </CardContent>
     </Card>
   )

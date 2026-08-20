@@ -7,12 +7,9 @@ import {
   CheckCircle2,
   Heart,
   MapPin,
-  Maximize2,
   ShieldCheck,
   Star,
-  Users,
 } from 'lucide-react'
-
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +23,10 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { getPropertyById } from '../../_actions/propertyActions'
 import { IReview } from '@/lib/types'
+import { RequestPropertyButton } from '../../_components/property/RequestPropertyButton'
+import { cookies } from 'next/headers'
+import { jwtUtils } from '@/utils/jwt'
+import { JwtPayload } from 'jsonwebtoken'
 
 interface PropertiesByIdPageProps {
   params: Promise<{ id: string }>
@@ -44,11 +45,21 @@ export default async function PropertiesByIdPage({
   const landlordName = property.landlord?.name ?? 'RentNest landlord';
   const amenities = property.amenities ?? [];
 
+  const isAvailable = property.isAvailable;
+
   const reviews = property.reviews ?? []
   const reviewCount = reviews.length
   const averageRating = reviewCount > 0
     ? reviews.reduce((sum: number, r: IReview) => sum + r.rating, 0) / reviewCount
     : 0
+
+  const cookieStore = await cookies()
+  const accessToken = cookieStore.get('accessToken')?.value
+  const decoded = accessToken
+    ? (jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string) as JwtPayload)
+    : null
+  const isLoggedIn = !!decoded?.success
+  const userRole = decoded?.success ? (decoded.data as JwtPayload).role : null
 
   return (
     <main className="min-h-screen bg-background">
@@ -70,7 +81,7 @@ export default async function PropertiesByIdPage({
               <div className="relative z-10 flex w-full items-end justify-between gap-4">
                 <div>
                   <Badge variant="secondary" className="mb-3">
-                    {property.isAvailable === false ? 'Currently rented' : 'Available now'}
+                    {isAvailable ?'Available now' : 'Currently rented' }
                   </Badge>
                   <p className="max-w-md text-sm text-muted-foreground">
                     Property preview for {property.title}
@@ -203,14 +214,21 @@ export default async function PropertiesByIdPage({
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
-              <Button
-                className="w-full"
-                size="lg"
-                render={<Link href={`/auth/login?redirect=/properties/${property.id}`} />}
-                nativeButton={false}
-              >
-                Request this property
-              </Button>
+             {isAvailable ? (
+                  <RequestPropertyButton
+                    propertyId={property.id}
+                    isLoggedIn={isLoggedIn}
+                    userRole={userRole}
+                  />
+                ) : (
+                  <Button
+                    className="w-full !bg-gray-400 !text-gray-200 !cursor-not-allowed"
+                    size="lg"
+                    disabled
+                  >
+                    Currently Unavailable
+                  </Button>
+                )}
               <p className="text-center text-xs text-muted-foreground">
                 You&apos;ll need to sign in before sending a request.
               </p>

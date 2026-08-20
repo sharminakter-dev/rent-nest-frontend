@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useSearchParams } from 'next/navigation'
 
 
 const RegisterForm = () => {
@@ -27,8 +28,11 @@ const RegisterForm = () => {
 
   const [role, setRole] = useState("");
 
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get("redirectTo") ?? "";
+
   // .bind(null, redirectTo),
-   const [state, action, pending] = useActionState(registerAction, false);
+   const [state, action, pending] = useActionState(registerAction.bind(null, redirectTo), false);
 
        useEffect(()=>{
         if(!state) return;

@@ -4,11 +4,10 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { LoginState, RegisterState } from "@/lib/types"
+import { revalidatePath } from "next/cache"
 
 
-
-// redirectTo: string, 
-export const loginAction = async(prevState: LoginState, formData: FormData)=>{
+export const loginAction = async(redirectTo: string, prevState: LoginState, formData: FormData)=>{
 
     const email = String(formData.get("email") || "").trim();
     const password = String(formData.get("password") || "");
@@ -66,11 +65,13 @@ export const loginAction = async(prevState: LoginState, formData: FormData)=>{
             sameSite: "lax"
         });
 
+        revalidatePath("/", "layout") 
+
         const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
 
-        // if(redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")){
-        //     redirect(redirectTo);
-        // }
+        if(redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")){
+            redirect(redirectTo);
+        }
 
         if(decodedToken.role === "TENANT"){
             redirect("/tenant-dashboard", "replace");
@@ -87,7 +88,7 @@ export const loginAction = async(prevState: LoginState, formData: FormData)=>{
 }
 
 
-export const registerAction = async(prevState: RegisterState, formData: FormData)=>{
+export const registerAction = async(redirectTo: string, prevState: RegisterState, formData: FormData)=>{
 
     const name = String(formData.get("name") || "");
     const email = String(formData.get("email") || "").trim();
@@ -149,9 +150,9 @@ export const registerAction = async(prevState: RegisterState, formData: FormData
     if(result.success){
         
 
-        // if(redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")){
-        //     redirect(redirectTo);
-        // }
+        if(redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")){
+            redirect(redirectTo);
+        }
 
         if(role === "TENANT"){
             redirect("/tenant-dashboard", "replace");
