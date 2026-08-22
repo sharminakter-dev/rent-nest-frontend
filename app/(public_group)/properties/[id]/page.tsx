@@ -43,7 +43,7 @@ export default async function PropertiesByIdPage({
   }
 
   const landlordName = property.landlord?.name ?? 'RentNest landlord';
-  const amenities = property.amenities ?? [];
+  const amenities : string[] | null = property.amenities ?? [];
 
   const isAvailable = property.isAvailable;
 
@@ -137,7 +137,7 @@ export default async function PropertiesByIdPage({
             <section className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold">Amenities</h2>
               <div className="grid gap-3 sm:grid-cols-2">
-                {amenities.map((amenity) => (
+                {amenities?.map((amenity) => (
                   <div key={amenity} className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CheckCircle2 className="text-primary" />
                     {amenity}

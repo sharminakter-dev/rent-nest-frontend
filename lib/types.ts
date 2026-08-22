@@ -95,3 +95,11 @@ export interface IReview {
 export type PropertySearchBarProps = {
   propertyCategories: string[];
 };
+
+export type RequestPropertyState = {
+    success: boolean
+    statusCode?: number
+    message?: string
+    data?: unknown
+    errors?: Record<string, string>
+} | null
