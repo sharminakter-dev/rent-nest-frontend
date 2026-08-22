@@ -53,11 +53,11 @@ const userMenuGroups = [
     if(action === "dashboard"){
 
       if(role === "TENANT"){
-        router.push("/tenant-dashboard");
+        router.push("/dashboard/tenant");
       }else if(role === "LANDLORD"){
-        router.push("/landlord-dashboard");
+        router.push("/dashboard/landlord");
       }else if(role === "ADMIN"){
-        router.push("/admin-dashboard");
+        router.push("/dashboard/admin");
       }
 
       return;
@@ -67,7 +67,7 @@ const userMenuGroups = [
     if(action === "logout"){
       await logout();
       toast.success("User Logged Out Successfully");
-      router.push("/login");
+      router.push("/auth/login");
     }
   }
 
@@ -113,7 +113,7 @@ const userMenuGroups = [
         <>
           {/* Desktop Actions */}
           <div className="hidden items-center gap-3 md:flex">
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button
                 variant="outline"
                 size="sm"
@@ -123,7 +123,7 @@ const userMenuGroups = [
               </Button>
             </Link>
 
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="sm">
                 Sign Up
               </Button>
@@ -172,7 +172,7 @@ const userMenuGroups = [
 
                 <div className="mt-6 space-y-3 border-t pt-4">
 
-                  <Link href="/login">
+                  <Link href="/auth/login">
                     <Button
                       variant="outline"
                       className="w-full"
@@ -181,7 +181,7 @@ const userMenuGroups = [
                     </Button>
                   </Link>
 
-                  <Link href="/register">
+                  <Link href="/auth/register">
                     <Button className="w-full">
                       Sign Up
                     </Button>

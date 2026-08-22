@@ -4,7 +4,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { jwtUtils } from './utils/jwt';
 import { getNewAccessToken } from './service/refreshToken';
 
-const AUTH_ROUTES = ["/login", "/register"];
+const AUTH_ROUTES = ["/auth/login", "/auth/register"];
 const PUBLIC_ROUTES = ["/", "/properties"];
 
 export async function proxy(request: NextRequest) {
@@ -59,11 +59,11 @@ export async function proxy(request: NextRequest) {
     // Already logged in, trying to hit /login or /register — bounce to their dashboard
     if (accessToken && AUTH_ROUTES.includes(pathName)) {
         if (userRole === 'TENANT') {
-            return NextResponse.redirect(new URL('/tenant-dashboard', request.url));
+            return NextResponse.redirect(new URL('/dashboard/tenant', request.url));
         } else if (userRole === 'LANDLORD') {
-            return NextResponse.redirect(new URL('/landlord-dashboard', request.url));
+            return NextResponse.redirect(new URL('/dashboard/landlord', request.url));
         } else if (userRole === 'ADMIN') {
-            return NextResponse.redirect(new URL('/admin-dashboard', request.url));
+            return NextResponse.redirect(new URL('/dashboard/admin', request.url));
         } else {
             return NextResponse.redirect(new URL('/', request.url));
         }
@@ -74,17 +74,17 @@ export async function proxy(request: NextRequest) {
 
     // Not logged in and hitting a protected page — send to login
     if (!accessToken && !isPublicRoute && !isAuthRoute) {
-        const loginUrl = new URL("/login", request.url);
+        const loginUrl = new URL("/auth/login", request.url);
         loginUrl.searchParams.set("redirectTo", pathName);
         return NextResponse.redirect(loginUrl);
     }
 
     // Role-based page protection (matches your actual roles: TENANT / LANDLORD / ADMIN)
-    if (pathName.startsWith("/tenant-dashboard") && userRole !== "TENANT") {
+    if (pathName.startsWith("/dashboard/tenant") && userRole !== "TENANT") {
         return NextResponse.redirect(new URL("/not-found", request.url));
-    } else if (pathName.startsWith("/landlord-dashboard") && userRole !== "LANDLORD") {
+    } else if (pathName.startsWith("/dashboard/landlord") && userRole !== "LANDLORD") {
         return NextResponse.redirect(new URL("/not-found", request.url));
-    } else if (pathName.startsWith("/admin-dashboard") && userRole !== "ADMIN") {
+    } else if (pathName.startsWith("/dashboard/admin") && userRole !== "ADMIN") {
         return NextResponse.redirect(new URL("/not-found", request.url));
     }
 

@@ -23,7 +23,7 @@ export function RequestPropertyButton({
         <Button
           className="w-full"
           size="lg"
-          render={<Link href={`/login?redirectTo=/properties/${propertyId}`} />}
+          render={<Link href={`/auth/login?redirectTo=/properties/${propertyId}`} />}
           nativeButton={false}
         >
           Request this property

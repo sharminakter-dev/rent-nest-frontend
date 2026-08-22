@@ -74,11 +74,11 @@ export const loginAction = async(redirectTo: string, prevState: LoginState, form
         }
 
         if(decodedToken.role === "TENANT"){
-            redirect("/tenant-dashboard", "replace");
+            redirect("/dashboard/tenant", "replace");
         }else if(decodedToken.role === "LANDLORD"){
-            redirect("/landlord-dashboard", "replace");
+            redirect("/dashboard/landlord", "replace");
         }else if(decodedToken.role === "ADMIN"){
-            redirect("/admin-dashboard", "replace");
+            redirect("/dashboard/admin", "replace");
         }
 
     }
@@ -155,11 +155,11 @@ export const registerAction = async(redirectTo: string, prevState: RegisterState
         }
 
         if(role === "TENANT"){
-            redirect("/tenant-dashboard", "replace");
+            redirect("/dashboard/tenant", "replace");
         }else if(role === "LANDLORD"){
-            redirect("/landlord-dashboard", "replace");
+            redirect("/dashboard/landlord", "replace");
         }else if(role === "ADMIN"){
-            redirect("/admin-dashboard", "replace");
+            redirect("/dashboard/admin", "replace");
         }
 
     }
