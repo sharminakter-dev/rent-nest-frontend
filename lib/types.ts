@@ -28,7 +28,7 @@ type IUser = {
             phone: string;
             address: string;
             status: string;
-            role: string;
+            role: 'ADMIN' | 'TENANT' | 'LANDLORD';
             createdAt : string;
             updatedAt: string;
             profile:{
@@ -103,3 +103,43 @@ export type RequestPropertyState = {
     data?: unknown
     errors?: Record<string, string>
 } | null
+
+// lib/types.ts
+export type RentalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE' | 'COMPLETED'
+
+export interface IRentalRequest {
+  id: string
+  message: string
+  startDate: string
+  durationMonths: number
+  status: RentalStatus
+  propertyId: string
+  tenantId: string
+  createdAt: string
+  updatedAt: string
+  property: {
+    title: string
+    isAvailable: boolean
+  }
+  tenant: {
+    name: string
+  }
+  review: { rating: number } | null
+}
+
+
+export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' 
+
+export interface IPayment {
+  id: string
+  transactionId: string
+  amount: string
+  paidAt: string
+  status: PaymentStatus
+  rentalRequestId: string
+  tenantId: string
+  landlordId: string
+  createdAt: string
+  updatedAt: string
+}
+
