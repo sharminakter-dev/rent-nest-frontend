@@ -61,9 +61,6 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
   const pathname = usePathname()
   const router = useRouter()
 
-  // Starts at '' on BOTH server and the client's first render, so
-  // hydration always matches — the real hash is only read after mount,
-  // inside the effect below, never during the initial render pass.
   const [hash, setHash] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
 

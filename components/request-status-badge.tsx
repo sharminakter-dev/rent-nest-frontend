@@ -1,6 +1,6 @@
 // components/request-status-badge.tsx
 import { Badge } from '@/components/ui/badge'
-import { PaymentStatus, RentalStatus } from '@/lib/types'
+import { RentalStatus } from '@/lib/types'
 
 const statusConfig: Record<RentalStatus, { label: string; className: string }> = {
   PENDING: { label: 'Pending', className: 'bg-amber-100 text-amber-800 hover:bg-amber-100' },
@@ -23,9 +23,4 @@ export function canReviewRequest(status: RentalStatus, hasReview: boolean) {
   return (status === 'ACTIVE' || status === 'COMPLETED') && !hasReview
 }
 
-const paymentStatusConfig: Record<PaymentStatus, { label: string; className: string }> = {
-  PENDING: { label: 'Pending', className: 'bg-amber-100 text-amber-800 hover:bg-amber-100' },
-  SUCCESS: { label: 'Paid', className: 'bg-green-100 text-green-800 hover:bg-green-100' },
-  FAILED: { label: 'Failed', className: 'bg-red-100 text-red-800 hover:bg-red-100' }
-}
 

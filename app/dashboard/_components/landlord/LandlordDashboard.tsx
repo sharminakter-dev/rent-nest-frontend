@@ -61,7 +61,7 @@ export function LandlordDashboard({
           <p className="mt-2 text-muted-foreground">Create listings, manage availability, and respond to tenants.</p>
         </div>
         <Button
-          render={<Link href="/dashboard/properties/new" />}
+          render={<Link href="/landlord/properties/new" />}
           nativeButton={false}
         >
           Add Property
