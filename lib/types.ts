@@ -16,7 +16,7 @@ export type LoginState = {
 
 
 
-type IUser = {
+export type IUser = {
     success: boolean;
     statusCode: number;
     message: string;
@@ -27,7 +27,7 @@ type IUser = {
             email: string;
             phone: string;
             address: string;
-            status: string;
+            status: 'ACTIVE' | 'BANNED';
             role: 'ADMIN' | 'TENANT' | 'LANDLORD';
             createdAt : string;
             updatedAt: string;
@@ -143,3 +143,11 @@ export interface IPayment {
   updatedAt: string
 }
 
+
+export type SubmitReviewState = {
+  success: boolean
+  statusCode?: number
+  message?: string
+  data?: unknown
+  errors?: Record<string, string>
+} | null

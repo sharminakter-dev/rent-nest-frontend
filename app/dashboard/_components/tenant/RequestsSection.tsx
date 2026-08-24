@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { RequestStatusBadge, canPayRequest, canReviewRequest } from '@/components/request-status-badge'
 import { IRentalRequest } from '@/lib/types'
 import { computeEndDate, formatDate } from './utils'
+import { ReviewDialog } from './ReviewDialog'
 
 function RequestRow({ request }: { request: IRentalRequest }) {
   const endDate = computeEndDate(request.startDate, request.durationMonths)
@@ -45,16 +46,13 @@ function RequestRow({ request }: { request: IRentalRequest }) {
           </span>
         ) : (
           canReviewRequest(request.status, false) && (
-            <Button size="sm" variant="outline">
-              <Star data-icon="inline-start" />
-              Leave Review
-            </Button>
+            <ReviewDialog rentalId={request.id} propertyTitle={request.property.title} />
           )
         )}
-      </div>
-    </div>
-  )
-}
+              </div>
+            </div>
+          )
+        }
 
 export function RequestsSection({ requests }: { requests: IRentalRequest[] }) {
   return (

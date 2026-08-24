@@ -10,6 +10,7 @@ import {
   Home,
   HousePlus,
   LayoutDashboard,
+  LogOut,
   Menu,
   Users,
   Wallet,
@@ -31,7 +32,7 @@ const navigation: Record<UserRole, { label: string; href: string; icon: typeof H
   ],
   LANDLORD: [
     { label: 'Overview', href: '/dashboard/landlord', icon: LayoutDashboard },
-    { label: 'Add new property', href: '/dashboard/landlord/properties/new', icon: HousePlus },
+    { label: 'My Properties', href: '/dashboard/landlord', icon: HousePlus },
     { label: 'Rental requests', href: '/dashboard/landlord/requests', icon: ClipboardList },
     { label: 'Earnings', href: '/dashboard/landlord#earnings', icon: BarChart3 },
   ],
@@ -59,18 +60,25 @@ function isActive(pathname: string, currentHash: string, href: string) {
 export function DashboardSidebar({ role }: { role: UserRole }) {
   const pathname = usePathname()
   const router = useRouter()
-  const [hash, setHash] = useState(() => (typeof window !== 'undefined' ? window.location.hash : ''))
+
+  // Starts at '' on BOTH server and the client's first render, so
+  // hydration always matches — the real hash is only read after mount,
+  // inside the effect below, never during the initial render pass.
+  const [hash, setHash] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
 
- useEffect(() => {
-  const onHashChange = () => setHash(window.location.hash)
-  window.addEventListener('hashchange', onHashChange)
-  window.addEventListener('popstate', onHashChange)
-  return () => {
-    window.removeEventListener('hashchange', onHashChange)
-    window.removeEventListener('popstate', onHashChange)
-  }
-}, [])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing to browser-owned state (URL hash) that's unknowable during SSR; runs post-mount, never during render.
+    setHash(window.location.hash)
+
+    const onHashChange = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', onHashChange)
+    window.addEventListener('popstate', onHashChange)
+    return () => {
+      window.removeEventListener('hashchange', onHashChange)
+      window.removeEventListener('popstate', onHashChange)
+    }
+  }, [])
 
   const handleNavClick = (href: string) => {
     const [, hrefHash] = href.split('#')
@@ -78,6 +86,16 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
     setMobileOpen(false)
   }
 
+  const handleSignOut = async () => {
+    try {
+      await logout()
+      toast.success('Signed out successfully')
+      setMobileOpen(false)
+      router.push('/auth/login')
+    } catch {
+      toast.error('Failed to sign out. Please try again.')
+    }
+  }
 
   const content = (
     <div className="flex h-full flex-col gap-6 p-4">
@@ -115,17 +133,28 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
           )
         })}
       </nav>
+
+      <div className="mt-auto border-t pt-4">
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <LogOut className="size-4" />
+          Sign out
+        </button>
+      </div>
     </div>
   )
 
   return (
     <>
-      {/* Desktop: fixed sidebar, always in the DOM at md+ */}
+      {/* Desktop */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-background md:block">
         {content}
       </aside>
 
-      {/* Mobile: top bar with menu trigger + slide-out Sheet, hidden at md+ */}
+      {/* Mobile */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <div className="flex h-14 items-center border-b bg-background px-4 md:hidden">
           <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="Open menu" />}>
