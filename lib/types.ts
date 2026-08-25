@@ -60,6 +60,13 @@ export type RegisterState = {
   };
 }
 
+export interface ICategory {
+  id: string
+  name: string
+  slug: string
+  description: string
+}
+
 export interface IProperty {
   id: string;
   title: string;
@@ -76,20 +83,19 @@ export interface IProperty {
   createdAt: string;
   updatedAt: string;
 
-  landlord: {
-    name: string;
-  };
-
-  category: {
-    slug: string;
-  };
-
+  landlord: IUser;
+  category: ICategory;
+  rentalRequest : IRentalRequest;
   reviews: IReview[];
 }
 
 export interface IReview {
+  id: string
   rating: number
   comment: string
+  createdAt: string
+  tenant: IUser
+  property: IProperty
 }
 
 export type PropertySearchBarProps = {
@@ -104,7 +110,6 @@ export type RequestPropertyState = {
     errors?: Record<string, string>
 } | null
 
-// lib/types.ts
 export type RentalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE' | 'COMPLETED'
 
 export interface IRentalRequest {
@@ -117,14 +122,9 @@ export interface IRentalRequest {
   tenantId: string
   createdAt: string
   updatedAt: string
-  property: {
-    title: string
-    isAvailable: boolean
-  }
-  tenant: {
-    name: string
-  }
-  review: { rating: number } | null
+  property: IProperty
+  tenant: IUser
+  review: IReview
 }
 
 
@@ -151,3 +151,4 @@ export type SubmitReviewState = {
   data?: unknown
   errors?: Record<string, string>
 } | null
+

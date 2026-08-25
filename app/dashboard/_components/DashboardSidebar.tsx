@@ -14,6 +14,7 @@ import {
   Menu,
   Users,
   Wallet,
+  Star
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -30,12 +31,13 @@ const navigation: Record<UserRole, { label: string; href: string; icon: typeof H
     { label: 'My requests', href: '/dashboard/tenant#requests', icon: ClipboardList },
     { label: 'My payments', href: '/dashboard/tenant#payments', icon: Wallet },
   ],
-  LANDLORD: [
-    { label: 'Overview', href: '/dashboard/landlord', icon: LayoutDashboard },
-    { label: 'My Properties', href: '/dashboard/landlord', icon: HousePlus },
-    { label: 'Rental requests', href: '/dashboard/landlord/requests', icon: ClipboardList },
-    { label: 'Earnings', href: '/dashboard/landlord#earnings', icon: BarChart3 },
-  ],
+LANDLORD: [
+  { label: 'Overview', href: '/dashboard/landlord', icon: LayoutDashboard },
+  { label: 'My properties', href: '/dashboard/landlord/properties', icon: Building2 },
+  { label: 'Add new property', href: '/dashboard/landlord/properties/new', icon: HousePlus },
+  { label: 'Rental requests', href: '/dashboard/landlord/requests', icon: ClipboardList },
+  { label: 'My Reviews', href: '/dashboard/landlord/reviews', icon: Star },
+],
   ADMIN: [
     { label: 'Overview', href: '/dashboard/admin', icon: LayoutDashboard },
     { label: 'Users', href: '/dashboard/admin#users', icon: Users },

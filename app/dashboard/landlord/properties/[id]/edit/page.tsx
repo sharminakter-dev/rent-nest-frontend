@@ -1,15 +1,21 @@
-import { notFound } from 'next/navigation'
-import { IProperty } from '@/lib/types'
+// app/dashboard/landlord/properties/[id]/edit/page.tsx
 import { getMyProperties } from '@/app/dashboard/_actions/landlordActions'
 import { PropertyForm } from '@/app/dashboard/_components/landlord/PropertyForm'
+import { notFound } from 'next/navigation'
 
 export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const res = await getMyProperties()
-  const properties: IProperty[] = res?.data ?? []
-  const property = properties.find((p) => p.id === id)
+  const property = (res?.data ?? []).find((p: { id: string }) => p.id === id)
 
   if (!property) notFound()
 
-  return <PropertyForm property={property} />
+  return (
+    <div className="mx-auto max-w-2xl">
+      <h1 className="text-2xl font-bold tracking-tight">Edit property</h1>
+      <div className="mt-6">
+        <PropertyForm mode="edit" property={property} />
+      </div>
+    </div>
+  )
 }

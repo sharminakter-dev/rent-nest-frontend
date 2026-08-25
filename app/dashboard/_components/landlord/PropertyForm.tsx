@@ -1,139 +1,93 @@
+// app/dashboard/landlord/properties/PropertyForm.tsx
 'use client'
 
-import { useState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-
-import { IProperty } from '@/lib/types'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
+import { IProperty } from '@/lib/types'
 import { createProperty, updateProperty } from '../../_actions/landlordActions'
 
-export function PropertyForm({ property }: { property?: IProperty }) {
+
+type PropertyFormProps = { mode: 'create' } | { mode: 'edit'; property: IProperty }
+
+export function PropertyForm(props: PropertyFormProps) {
   const router = useRouter()
-  const [submitting, setSubmitting] = useState(false)
+  const action = props.mode === 'create' ? createProperty : updateProperty.bind(null, props.property.id)
+  const [state, formAction, pending] = useActionState(action, null) as any
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setSubmitting(true)
-    const form = new FormData(e.currentTarget)
-
-    const basePayload = {
-      title: String(form.get('title')),
-      description: String(form.get('description')),
-      location: String(form.get('location')),
-      bedrooms: Number(form.get('bedrooms')),
-      bathrooms: Number(form.get('bathrooms')),
-      rent: Number(form.get('rent')),
-      image: String(form.get('image') || ''),
-    }
-
-    const res = property
-      ? await updateProperty(property.id, {
-          ...basePayload,
-          isAvailable: form.get('isAvailable') === 'on',
-        })
-      : await createProperty({
-          ...basePayload,
-          category: {
-            name: String(form.get('category')),
-            slug: String(form.get('category')).toLowerCase().replace(/\s+/g, '-'),
-          },
-        })
-
-    setSubmitting(false)
-
-    if (res.success) {
-      toast.success(property ? 'Property updated' : 'Property created')
-      router.push('/dashboard/landlord')
-      router.refresh()
+  useEffect(() => {
+    if (!state) return
+    if (state.success) {
+      toast.success(props.mode === 'create' ? 'Property created' : 'Property updated')
+      if (props.mode === 'create') router.push('/dashboard/landlord/properties')
     } else {
-      toast.error(res.message ?? 'Something went wrong')
+      toast.error(state.message || 'Something went wrong')
     }
-  }
+  }, [state])
+
+  const property = props.mode === 'edit' ? props.property : undefined
 
   return (
-    <main className="mx-auto max-w-3xl p-4 py-8 sm:p-6 lg:p-8">
-      <div className="mb-8">
-        <p className="text-sm font-medium text-primary">Property management</p>
-        <h1 className="mt-1 text-3xl font-bold">{property ? 'Edit property' : 'Create property'}</h1>
-        <p className="mt-2 text-muted-foreground">Add the details tenants need to choose their next home.</p>
+    <form action={formAction} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="title">Title</Label>
+        <Input id="title" name="title" defaultValue={property?.title} required />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Listing details</CardTitle>
-          <CardDescription>All fields can be updated later.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-            <label className="flex flex-col gap-2 text-sm font-medium">
-              Property title
-              <Input name="title" defaultValue={property?.title} placeholder="Modern city apartment" required />
-            </label>
+      <div className="space-y-2">
+        <Label htmlFor="description">Description</Label>
+        <Textarea id="description" name="description" defaultValue={property?.description} required className="min-h-24" />
+      </div>
 
-            <label className="flex flex-col gap-2 text-sm font-medium">
-              Location
-              <Input name="location" defaultValue={property?.location} placeholder="Street, city, state" required />
-            </label>
+      {props.mode === 'create' && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input id="location" name="location" required />
+          </div>
 
-            <div className="grid gap-5 sm:grid-cols-3">
-              <label className="flex flex-col gap-2 text-sm font-medium">
-                Monthly rent
-                <Input name="rent" type="number" defaultValue={property?.rent} required />
-              </label>
-              <label className="flex flex-col gap-2 text-sm font-medium">
-                Bedrooms
-                <Input name="bedrooms" type="number" defaultValue={property?.bedrooms} required />
-              </label>
-              <label className="flex flex-col gap-2 text-sm font-medium">
-                Bathrooms
-                <Input name="bathrooms" type="number" defaultValue={property?.bathrooms} required />
-              </label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="bedrooms">Bedrooms</Label>
+              <Input id="bedrooms" name="bedrooms" type="number" min={0} required />
             </div>
-
-            <label className="flex flex-col gap-2 text-sm font-medium">
-              Image URL
-              <Input name="image" defaultValue={property?.image ?? ''} placeholder="https://..." />
-            </label>
-
-            {!property && (
-              <label className="flex flex-col gap-2 text-sm font-medium">
-                Category
-                <Input name="category" placeholder="Villa, Apartment, Studio..." required />
-              </label>
-            )}
-
-            <label className="flex flex-col gap-2 text-sm font-medium">
-              Description
-              <textarea
-                name="description"
-                defaultValue={property?.description}
-                className="min-h-28 rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                required
-              />
-            </label>
-
-            {property && (
-              <label className="flex items-center gap-2 text-sm font-medium">
-                <input type="checkbox" name="isAvailable" defaultChecked={property.isAvailable} className="size-4" />
-                Available for rent
-              </label>
-            )}
-
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" render={<Link href="/dashboard/landlord" />}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={submitting}>
-                {submitting ? 'Saving...' : property ? 'Save changes' : 'Create property'}
-              </Button>
+            <div className="space-y-2">
+              <Label htmlFor="bathrooms">Bathrooms</Label>
+              <Input id="bathrooms" name="bathrooms" type="number" min={0} required />
             </div>
-          </form>
-        </CardContent>
-      </Card>
-    </main>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Category</Label>
+            <div className="grid grid-cols-3 gap-2">
+              <Input name="categoryName" placeholder="Name (e.g. Villa)" required />
+              <Input name="categorySlug" placeholder="Slug (e.g. villa)" required />
+              <Input name="categoryDescription" placeholder="Description" required />
+            </div>
+          </div>
+        </>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="rent">Monthly rent</Label>
+        <Input id="rent" name="rent" type="number" min={0} defaultValue={property?.rent} required />
+      </div>
+
+      {props.mode === 'edit' && (
+        <Label className="flex items-center gap-2">
+          <Checkbox name="isAvailable" defaultChecked={property?.isAvailable} />
+          Available for rent
+        </Label>
+      )}
+
+      <Button type="submit" disabled={pending} className="w-full">
+        {pending ? 'Saving...' : props.mode === 'create' ? 'Create Property' : 'Save Changes'}
+      </Button>
+    </form>
   )
 }
