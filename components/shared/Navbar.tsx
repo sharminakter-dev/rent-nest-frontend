@@ -67,6 +67,10 @@ const userMenuGroups = [
 
     }
 
+    if(action === "profile"){
+       router.push("/profile");
+    }
+
     if(action === "logout"){
       await logout();
       toast.success("User Logged Out Successfully");
