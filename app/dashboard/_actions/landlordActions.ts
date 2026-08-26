@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers"
 import { revalidatePath } from "next/cache"
+import { PropertyFormState } from "@/lib/types"
+import { redirect } from "next/navigation"
 
 async function authHeaders() {
   const cookieStore = await cookies()
@@ -17,7 +19,10 @@ export async function getMyProperties() {
   return res.json()
 }
 
-export async function createProperty(prevState: any, formData: FormData) {
+export async function createProperty(
+  prevState: PropertyFormState,
+  formData: FormData
+): Promise<PropertyFormState> {
   const payload = {
     title: formData.get("title"),
     description: formData.get("description"),
@@ -25,9 +30,10 @@ export async function createProperty(prevState: any, formData: FormData) {
     bedrooms: Number(formData.get("bedrooms")),
     bathrooms: Number(formData.get("bathrooms")),
     rent: Number(formData.get("rent")),
+    image: formData.get("image") || null,
     category: {
-      name: formData.get("categoryName"),
       slug: formData.get("categorySlug"),
+      name: formData.get("categoryName"),
       description: formData.get("categoryDescription"),
     },
   }
@@ -42,22 +48,32 @@ export async function createProperty(prevState: any, formData: FormData) {
   return result
 }
 
-export async function updateProperty(propertyId: string, prevState: any, formData: FormData) {
+export async function updateProperty(
+  propertyId: string,
+  prevState: PropertyFormState,
+  formData: FormData
+): Promise<PropertyFormState> {
   const payload = {
-    title: formData.get("title"),
-    description: formData.get("description"),
+    title: formData.get("title") || undefined,
+    description: formData.get("description") || undefined,
+    image: formData.get("image") || undefined,
     rent: Number(formData.get("rent")),
     isAvailable: formData.get("isAvailable") === "on",
   }
 
   const res = await fetch(`${process.env.BACKEND_API_URL}/api/landlord/properties/${propertyId}`, {
-    method: "PATCH",
+    method: "PUT",
     headers: await authHeaders(),
     body: JSON.stringify(payload),
   })
-  const result = await res.json()
-  if (result.success) revalidatePath("/dashboard/landlord/properties")
-  return result
+ const result = await res.json()
+
+  if (!result.success) {
+    return result
+  }
+
+  revalidatePath("/dashboard/landlord/properties")
+  redirect("/dashboard/landlord/properties")
 }
 
 export async function deleteProperty(propertyId: string) {
@@ -95,4 +111,12 @@ export async function getMyReviews() {
     cache: "no-store",
   })
   return res.json()
+}
+
+export const getAllCategoriesFull = async () => {
+  const res = await fetch(`${process.env.BACKEND_API_URL}/api/categories`, {
+    cache: "no-store",
+  })
+  const result = await res.json()
+  return result.data 
 }

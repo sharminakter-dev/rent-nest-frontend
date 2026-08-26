@@ -14,27 +14,28 @@ export type LoginState = {
   };
 }
 
-
+export interface IUserProfile {
+  id: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  status: 'ACTIVE' | 'BANNED'
+  role: 'ADMIN' | 'TENANT' | 'LANDLORD'
+  createdAt: string
+  updatedAt: string
+  profile: {
+    profilePhoto: string
+    bio: string
+  }
+}
 
 export type IUser = {
     success: boolean;
     statusCode: number;
     message: string;
     data: {
-        result:{
-            id: string;
-            name: string;
-            email: string;
-            phone: string;
-            address: string;
-            status: 'ACTIVE' | 'BANNED';
-            role: 'ADMIN' | 'TENANT' | 'LANDLORD';
-            createdAt : string;
-            updatedAt: string;
-            profile:{
-              profilePhoto: string;
-              bio:string;
-            }
+        result: IUserProfile
         }
     }
 }
@@ -94,7 +95,7 @@ export interface IReview {
   rating: number
   comment: string
   createdAt: string
-  tenant: IUser
+  tenant: IUserProfile
   property: IProperty
 }
 
@@ -123,7 +124,7 @@ export interface IRentalRequest {
   createdAt: string
   updatedAt: string
   property: IProperty
-  tenant: IUser
+  tenant: Pick<IUserProfile, 'id' | 'name' | 'email'>
   review: IReview
 }
 
@@ -152,3 +153,10 @@ export type SubmitReviewState = {
   errors?: Record<string, string>
 } | null
 
+export type PropertyFormState = {
+  success: boolean
+  statusCode?: number
+  message?: string
+  data?: unknown
+  errors?: Record<string, string>
+} | null

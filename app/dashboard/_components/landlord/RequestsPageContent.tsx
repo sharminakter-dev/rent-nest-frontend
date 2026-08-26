@@ -12,10 +12,10 @@ import { updateRequestStatus } from '../../_actions/landlordActions'
 export function RequestsPageContent({ requests }: { requests: IRentalRequest[] }) {
   const [isPending, startTransition] = useTransition()
 
-  function handleRequest(id: string, status: 'ACTIVE' | 'REJECTED') {
+  function handleRequest(id: string, status: 'APPROVED' | 'REJECTED') {
     startTransition(async () => {
       const res = await updateRequestStatus(id, status)
-      if (res.success) toast.success(`Request ${status === 'ACTIVE' ? 'approved' : 'rejected'}`)
+      if (res.success) toast.success(`Request ${status === 'APPROVED' ? 'approved' : 'rejected'}`)
       else toast.error(res.message ?? 'Failed to update request')
     })
   }
@@ -49,7 +49,7 @@ export function RequestsPageContent({ requests }: { requests: IRentalRequest[] }
               </div>
               {request.status === 'PENDING' && (
                 <div className="mt-4 flex gap-2">
-                  <Button size="sm" disabled={isPending} onClick={() => handleRequest(request.id, 'ACTIVE')}>
+                  <Button size="sm" disabled={isPending} onClick={() => handleRequest(request.id, 'APPROVED')}>
                     <Check data-icon="inline-start" />Approve
                   </Button>
                   <Button size="sm" variant="outline" disabled={isPending} onClick={() => handleRequest(request.id, 'REJECTED')}>

@@ -14,7 +14,7 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
     <div className="mx-auto max-w-2xl">
       <h1 className="text-2xl font-bold tracking-tight">Edit property</h1>
       <div className="mt-6">
-        <PropertyForm mode="edit" property={property} />
+        <PropertyForm key={`${property.id}-${property.updatedAt}`} mode="edit" property={property} />
       </div>
     </div>
   )
