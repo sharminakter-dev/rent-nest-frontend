@@ -8,6 +8,7 @@ import { RequestStatusBadge } from '@/components/request-status-badge'
 import { IRentalRequest } from '@/lib/types'
 import { toast } from 'sonner'
 import { updateRequestStatus } from '../../_actions/landlordActions'
+import Image from 'next/image'
 
 export function RequestsPageContent({ requests }: { requests: IRentalRequest[] }) {
   const [isPending, startTransition] = useTransition()
@@ -19,6 +20,10 @@ export function RequestsPageContent({ requests }: { requests: IRentalRequest[] }
       else toast.error(res.message ?? 'Failed to update request')
     })
   }
+
+  const propertyImg =
+  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+
 
   return (
     <main className="w-full p-4 py-8 sm:p-6 lg:p-8">
@@ -37,6 +42,16 @@ export function RequestsPageContent({ requests }: { requests: IRentalRequest[] }
           {requests.map((request) => (
             <div key={request.id} className="rounded-lg border p-4">
               <div className="flex items-start justify-between gap-3">
+                 <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
+                    <Image
+                      src={request.property.image ?? propertyImg}
+                      alt={request.property.title}
+                      width={48}
+                      height={48}
+                      unoptimized
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 <div>
                   <p className="font-semibold">{request.property?.title}</p>
                   <p className="text-sm text-muted-foreground">

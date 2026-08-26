@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { IProperty } from '@/lib/types'
 import { deleteProperty } from '../../_actions/landlordActions'
+import Image from 'next/image'
 
 
 export function PropertyRow({ property }: { property: IProperty }) {
@@ -29,9 +30,20 @@ export function PropertyRow({ property }: { property: IProperty }) {
     }
   }
 
+  const propertyImg =
+  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+
+
   return (
     <Card>
       <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <Image
+          src={property?.image || propertyImg}
+          unoptimized
+          alt= {property.title}
+          width={200}
+          height={200}
+        />
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="truncate font-semibold">{property.title}</h3>
