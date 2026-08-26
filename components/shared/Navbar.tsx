@@ -24,6 +24,7 @@ import { logout } from '@/service/logOut'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import Image from 'next/image'
 
 export function Navbar( {user}: NavbarProps ) {
   
@@ -46,7 +47,9 @@ const userMenuGroups = [
 ]
 
   const router = useRouter();
-  const role = user.data?.result?.role
+  const role = user.data?.result?.role;
+
+  const imageSrc= user.data?.result?.profile?.profilePhoto ?? 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
 
   const handleUserMenuAction = async(action: string) =>{
 
@@ -198,7 +201,7 @@ const userMenuGroups = [
         /*
            LOGGED IN
        */
-        <>
+        <div className="flex items-center gap-3">
           {/* Mobile Navigation */}
           <DropdownMenu>
 
@@ -245,7 +248,7 @@ const userMenuGroups = [
               <Avatar className="size-9">
 
                 <AvatarImage
-                  src="/user-avatar.png"
+                  src={imageSrc}
                   alt={user.data?.result?.name || "User"}
                 />
 
@@ -332,7 +335,7 @@ const userMenuGroups = [
             </DropdownMenuContent>
 
           </DropdownMenu>
-        </>
+        </div>
 
       )}
 

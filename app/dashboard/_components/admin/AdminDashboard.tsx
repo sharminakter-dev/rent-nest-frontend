@@ -9,6 +9,7 @@ import { RequestStatusBadge } from '@/components/request-status-badge'
 import { IProperty, IRentalRequest } from '@/lib/types'
 import { toast } from 'sonner'
 import { AdminUserRecord, updateUserStatus } from '../../_actions/adminActions'
+import Image from 'next/image'
 
 export function AdminDashboard({
   users,
@@ -34,6 +35,11 @@ export function AdminDashboard({
     { label: 'Total listings', value: properties.length, detail: 'Across all landlords', icon: Building2 },
     { label: 'Total rentals', value: rentals.length, detail: 'All requests to date', icon: ClipboardList },
   ]
+
+  const userProfile= 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+
+  const propertyImg = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
 
   return (
     <main className="w-full p-4 py-8 sm:p-6 lg:p-8">
@@ -72,10 +78,22 @@ export function AdminDashboard({
           {users.map((user) => (
             <div key={user.id} className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex min-w-0 items-center gap-3">
-                {user.profile?.profilePhoto && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={user.profile.profilePhoto} alt="" className="size-10 shrink-0 rounded-full object-cover" />
-                )}
+               {user.profile?.profilePhoto ? (
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
+                      <Image
+                        src={user.profile?.profilePhoto ?? userProfile} 
+                        alt={user.name}
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-muted text-sm font-semibold">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                 <div className="min-w-0">
                   <p className="truncate font-semibold">{user.name}</p>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
@@ -112,6 +130,22 @@ export function AdminDashboard({
           {properties.map((property) => (
             <div key={property.id} className="flex flex-col gap-1 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
+                {property.image ? (
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
+                      <Image
+                        src={property.image ?? propertyImg}
+                        alt={property.title}
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-muted text-sm font-semibold">
+                      {property.title?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                 <p className="font-semibold">{property.title}</p>
                 <p className="text-sm text-muted-foreground">
                   {property.location} · ${property.rent}/mo · by {property.landlord?.name}
@@ -135,8 +169,24 @@ export function AdminDashboard({
           {rentals.map((rental) => (
             <div key={rental.id} className="flex items-start justify-between gap-3 rounded-lg border p-4">
               <div>
-                <p className="font-semibold">{rental.property?.title}</p>
-                <p className="text-sm text-muted-foreground">{rental.tenant?.name}</p>
+                 {rental.property.image ? (
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
+                      <Image
+                        src={rental.property.image ?? propertyImg}
+                        alt={rental.property.title}
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-muted text-sm font-semibold">
+                      {rental.property.title?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                <p className="font-semibold">Owner : {rental.property?.title}</p>
+                <p className="text-sm text-muted-foreground">Requested By : {rental.tenant?.name}</p>
               </div>
               <RequestStatusBadge status={rental.status} />
             </div>

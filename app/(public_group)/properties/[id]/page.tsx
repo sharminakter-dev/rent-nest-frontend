@@ -24,6 +24,7 @@ import { Separator } from '@/components/ui/separator'
 import { getPropertyById } from '../../_actions/propertyActions'
 import { IReview } from '@/lib/types'
 import { RequestPropertyButton } from '../../_components/property/RequestPropertyButton'
+import { PropertyHeroImage } from '../../_components/property/PropertyHeroImage'
 import { cookies } from 'next/headers'
 import { jwtUtils } from '@/utils/jwt'
 import { JwtPayload } from 'jsonwebtoken'
@@ -77,7 +78,8 @@ export default async function PropertiesByIdPage({
         <section className="grid gap-8 lg:grid-cols-[1.45fr_1fr] lg:items-start">
           <div className="flex flex-col gap-6">
             <div className="relative flex min-h-80 items-end overflow-hidden rounded-xl bg-muted p-6 sm:min-h-[30rem]">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-primary/5" />
+              <PropertyHeroImage src={property.image} alt={property.title} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="relative z-10 flex w-full items-end justify-between gap-4">
                 <div>
                   <Badge variant="secondary" className="mb-3">

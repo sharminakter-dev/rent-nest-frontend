@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { MapPin, Star, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 
 interface PropertyCardProps {
@@ -20,13 +21,22 @@ export function PropertyCard({ property }: PropertyCardProps) {
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
     : 0
 
+    const propertyImage = property.image?? "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       {/* Image Container */}
       <div className="relative h-48 bg-muted overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm font-medium">{property.image}</p>
+            <Image
+                  src={propertyImage}
+                  unoptimized
+                  alt= {property.title}
+                  width={500}
+                  height={500}
+            />
           </div>
         </div>
         {/* {property.featured && (

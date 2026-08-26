@@ -36,9 +36,9 @@ export type IUser = {
     message: string;
     data: {
         result: IUserProfile
-        }
-    }
+      }
 }
+
 
 export type NavbarProps = {
     user: IUser
@@ -84,7 +84,7 @@ export interface IProperty {
   createdAt: string;
   updatedAt: string;
 
-  landlord: IUser;
+  landlord: IUserProfile;
   category: ICategory;
   rentalRequest : IRentalRequest;
   reviews: IReview[];
@@ -111,7 +111,7 @@ export type RequestPropertyState = {
     errors?: Record<string, string>
 } | null
 
-export type RentalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE' | 'COMPLETED'
+export type RentalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED'
 
 export interface IRentalRequest {
   id: string

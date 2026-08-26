@@ -7,6 +7,7 @@ const statusConfig: Record<RentalStatus, { label: string; className: string }> =
   APPROVED: { label: 'Approved', className: 'bg-blue-100 text-blue-800 hover:bg-blue-100' },
   REJECTED: { label: 'Rejected', className: 'bg-red-100 text-red-800 hover:bg-red-100' },
   ACTIVE: { label: 'Active', className: 'bg-green-100 text-green-800 hover:bg-green-100' },
+  CANCELLED: { label: 'Cancelled', className: 'bg-slate-100 text-slate-600 hover:bg-slate-100' },
   COMPLETED: { label: 'Completed', className: 'bg-gray-100 text-gray-700 hover:bg-gray-100' },
 }
 
@@ -21,6 +22,10 @@ export function canPayRequest(status: RentalStatus) {
 
 export function canReviewRequest(status: RentalStatus, hasReview: boolean) {
   return (status === 'ACTIVE' || status === 'COMPLETED') && !hasReview
+}
+
+export function canCancelRequest(status: RentalStatus) {
+  return status === 'PENDING'
 }
 
 
