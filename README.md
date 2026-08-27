@@ -4,11 +4,13 @@ A role-based rental marketplace built with Next.js App Router. Tenants browse an
 
 ## Tech stack
 
-- **Next.js 16** (App Router, Turbopack, Server Actions)
-- **TypeScript**
-- **Tailwind CSS** + shadcn/ui components (Base UI primitives — note: uses `render`/`nativeButton` props, not Radix's `asChild`)
+- **Next.js 16.2** (App Router, Turbopack, Server Actions), **React 19.2**
+- **TypeScript 5**
+- **Tailwind CSS 4** + shadcn/ui components on **Base UI** primitives (`@base-ui/react`) — not Radix, see conventions below
 - **Stripe Checkout** for payments
 - **Sonner** for toast notifications
+- **jsonwebtoken** for server-side JWT verification (middleware, `getMe`, page-level role checks)
+- **Prettier** (with `prettier-plugin-tailwindcss` for class sorting) + **ESLint 9** for formatting/linting
 
 ## Getting started
 
@@ -24,6 +26,17 @@ npm run dev
 |---|---|
 | `BACKEND_API_URL` | Base URL of the backend API (e.g. `http://localhost:5000`) |
 | `JWT_ACCESS_SECRET` | Must match the backend's access token secret — used to verify/decode the `accessToken` cookie server-side (middleware, `getMe`, page-level role checks) |
+
+### Available scripts
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the Turbopack dev server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build (run `build` first) |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format all `.ts`/`.tsx` files with Prettier |
+| `npm run typecheck` | Type-check the project without emitting output |
 
 ## Project structure
 
