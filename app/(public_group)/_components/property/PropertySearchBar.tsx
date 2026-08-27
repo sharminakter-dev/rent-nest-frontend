@@ -30,7 +30,7 @@ export function PropertySearchBar( {
   const [minRent, setMinRent] = useState(getParam("minRent") ?? "");
   const [maxRent, setMaxRent] = useState(getParam("maxRent") ?? "");
   const [type, setType] = useState(getParam("type") ?? "all");
-  const [sortOrder, setSortOrder] = useState(getParam("sortOrder") ?? "asc");
+  const [sortOrder, setSortOrder] = useState(getParam("sortOrder") ?? "desc");
 
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const minRentDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -47,7 +47,7 @@ export function PropertySearchBar( {
   };
 
   const debounce = (
-    ref: React.MutableRefObject<ReturnType<typeof setTimeout> | null>,
+    ref: React.RefObject<ReturnType<typeof setTimeout> | null>,
     fn: () => void,
     delay = 500
   ) => {
@@ -83,9 +83,9 @@ export function PropertySearchBar( {
   };
 
   const handleSortOrderChange = (value: string | null) => {
-    const next = value ?? "asc";
-    setSortOrder(next);
-    updateParam("sortOrder", next === "asc" ? undefined : next);
+      const next = value ?? "desc";
+      setSortOrder(next);
+      updateParam("sortOrder", next === "desc" ? undefined : next);
   };
 
   return (
@@ -142,10 +142,11 @@ export function PropertySearchBar( {
           <SelectValue placeholder="Order" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="asc">Ascending</SelectItem>
           <SelectItem value="desc">Descending</SelectItem>
+          <SelectItem value="asc">Ascending</SelectItem>
         </SelectContent>
-      </Select>
+    </Select>
+
     </div>
   );
 }
