@@ -1,16 +1,13 @@
 'use client'
 
 import { useTransition } from 'react'
-import Image from 'next/image'
 import { ShieldBan, ShieldCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { EntityAvatar } from '@/components/entity-avatar'
 import { toast } from 'sonner'
 import { AdminUserRecord, updateUserStatus } from '../../_actions/adminActions'
-
-const userProfile =
-  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
 
 export function UsersSection({ users }: { users: AdminUserRecord[] }) {
   const [isPending, startTransition] = useTransition()
@@ -24,37 +21,26 @@ export function UsersSection({ users }: { users: AdminUserRecord[] }) {
   }
 
   return (
-    <Card id="users" className="mt-6">
+    <Card id="users" className="mt-6 scroll-mt-24">
       <CardHeader>
-        <CardTitle>Users</CardTitle>
-        <CardDescription>Ban or reactivate accounts.</CardDescription>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <CardTitle>Users</CardTitle>
+            <CardDescription>Ban or reactivate accounts.</CardDescription>
+          </div>
+          <Badge variant="secondary">{users.length} total</Badge>
+        </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col divide-y">
         {users.map((user) => (
-          <div key={user.id} className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div key={user.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              {user.profile?.profilePhoto ? (
-                <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
-                  <Image
-                    src={user.profile?.profilePhoto ?? userProfile}
-                    alt={user.name}
-                    width={48}
-                    height={48}
-                    unoptimized
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-muted text-sm font-semibold">
-                  {user.name?.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <EntityAvatar src={user.profile?.profilePhoto} fallbackSeed={user.name} alt={user.name} />
               <div className="min-w-0">
                 <p className="truncate font-semibold">{user.name}</p>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
-                {user.phone && <p className="text-xs text-muted-foreground">{user.phone}</p>}
-                <div className="mt-2 flex gap-2">
-                  <Badge variant="outline">{user.role}</Badge>
+                <p className="truncate text-sm text-muted-foreground">{user.email}</p>
+                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                  <Badge variant="outline" className="font-normal">{user.role}</Badge>
                   <Badge
                     className={
                       user.status === 'ACTIVE'
@@ -64,30 +50,33 @@ export function UsersSection({ users }: { users: AdminUserRecord[] }) {
                   >
                     {user.status}
                   </Badge>
+                  {user.phone && <span className="text-xs text-muted-foreground">{user.phone}</span>}
                 </div>
               </div>
             </div>
             {user.role !== 'ADMIN' && (
-              user.status === 'ACTIVE' ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={isPending}
-                  onClick={() => handleStatus(user.id, 'BANNED', user.name)}
-                  className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
-                >
-                  <ShieldBan data-icon="inline-start" />Ban
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  disabled={isPending}
-                  onClick={() => handleStatus(user.id, 'ACTIVE', user.name)}
-                  className="bg-green-600 text-white hover:bg-green-700"
-                >
-                  <ShieldCheck data-icon="inline-start" />Reactivate
-                </Button>
-              )
+              <div className="shrink-0">
+                {user.status === 'ACTIVE' ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isPending}
+                    onClick={() => handleStatus(user.id, 'BANNED', user.name)}
+                    className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+                  >
+                    <ShieldBan data-icon="inline-start" />Ban
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    disabled={isPending}
+                    onClick={() => handleStatus(user.id, 'ACTIVE', user.name)}
+                    className="bg-green-600 text-white hover:bg-green-700"
+                  >
+                    <ShieldCheck data-icon="inline-start" />Reactivate
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         ))}

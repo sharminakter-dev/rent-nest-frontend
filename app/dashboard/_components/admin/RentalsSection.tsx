@@ -17,7 +17,7 @@ export function RentalsSection({ rentals }: { rentals: IRentalRequest[] }) {
         {rentals.map((rental) => (
           <div key={rental.id} className="flex items-center justify-between gap-3 rounded-lg border p-4">
             <div className="flex min-w-0 items-center gap-3">
-              {rental.property.image ? (
+              {
                 <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
                   <Image
                     src={rental.property.image ?? propertyImg}
@@ -28,11 +28,7 @@ export function RentalsSection({ rentals }: { rentals: IRentalRequest[] }) {
                     className="h-full w-full object-cover"
                   />
                 </div>
-              ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-muted text-sm font-semibold">
-                  {rental.property.title?.charAt(0).toUpperCase()}
-                </div>
-              )}
+              }
               <div className="min-w-0">
                 <p className="truncate font-semibold">Owner : {rental.property?.title}</p>
                 <p className="text-sm text-muted-foreground">Requested By : {rental.tenant?.name}</p>

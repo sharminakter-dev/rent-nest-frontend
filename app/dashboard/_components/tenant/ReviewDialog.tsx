@@ -1,7 +1,7 @@
 "use client"
 
 import { useActionState, useEffect, useState } from "react"
-import { Star } from "lucide-react"
+import { Loader2, Star } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -94,12 +94,20 @@ export function ReviewDialog({ rentalId, propertyTitle }: LeaveReviewDialogProps
               <p className="text-xs text-destructive">{state.errors.comment}</p>
             )}
           </div>
-
+          
           <DialogFooter>
             <Button type="submit" disabled={pending} className="w-full">
-              {pending ? "Submitting..." : "Submit Review"}
+              {pending ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" data-icon="inline-start" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Review'
+              )}
             </Button>
           </DialogFooter>
+
         </form>
       </DialogContent>
     </Dialog>

@@ -1,43 +1,46 @@
-import Image from 'next/image'
+import { Bath, BedDouble, MapPin } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { EntityAvatar } from '@/components/entity-avatar'
 import { IProperty } from '@/lib/types'
 
-const propertyImg =
-  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+function formatRent(rent: string | number) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(rent))
+}
 
 export function ListingsSection({ properties }: { properties: IProperty[] }) {
   return (
-    <Card id="listings" className="mt-6">
+    <Card id="listings" className="mt-6 scroll-mt-24">
       <CardHeader>
-        <CardTitle>Listings</CardTitle>
-        <CardDescription>Every property on the platform.</CardDescription>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <CardTitle>Listings</CardTitle>
+            <CardDescription>Every property on the platform.</CardDescription>
+          </div>
+          <Badge variant="secondary">{properties.length} total</Badge>
+        </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col divide-y">
         {properties.map((property) => (
-          <div key={property.id} className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div key={property.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              {property.image ? (
-                <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border">
-                  <Image
-                    src={property.image ?? propertyImg}
-                    alt={property.title}
-                    width={48}
-                    height={48}
-                    unoptimized
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-muted text-sm font-semibold">
-                  {property.title?.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <EntityAvatar src={property.image} fallbackSeed={property.title} alt={property.title} />
               <div className="min-w-0">
                 <p className="truncate font-semibold">{property.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  {property.location} · ${property.rent}/mo · by {property.landlord?.name}
+                <p className="mt-0.5 flex items-center gap-1 truncate text-sm text-muted-foreground">
+                  <MapPin className="size-3.5 shrink-0" />
+                  {property.location}
                 </p>
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <BedDouble className="size-3.5" />{property.bedrooms}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Bath className="size-3.5" />{property.bathrooms}
+                  </span>
+                  <span className="font-medium text-foreground">{formatRent(property.rent)}/mo</span>
+                  <span>by {property.landlord?.name}</span>
+                </div>
               </div>
             </div>
             <Badge

@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react'
 import Link from 'next/link'
-import { ArrowUpRight, Star, X } from 'lucide-react'
+import { ArrowUpRight, Loader2, Star, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   RequestStatusBadge,
@@ -45,7 +45,7 @@ export function RequestRow({ request }: { request: IRentalRequest }) {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <RequestStatusBadge status={request.status} />
         {canCancelRequest(request.status) && (
           <Button
@@ -53,8 +53,13 @@ export function RequestRow({ request }: { request: IRentalRequest }) {
             variant="outline"
             disabled={isPending}
             onClick={handleCancel}
+            className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
           >
-            <X data-icon="inline-start" />
+            {isPending ? (
+              <Loader2 className="size-4 animate-spin" data-icon="inline-start" />
+            ) : (
+              <X data-icon="inline-start" />
+            )}
             {isPending ? 'Cancelling…' : 'Cancel'}
           </Button>
         )}
@@ -63,6 +68,7 @@ export function RequestRow({ request }: { request: IRentalRequest }) {
             size="sm"
             render={<Link href={`/dashboard/tenant/requests/${request.id}/pay`} />}
             nativeButton={false}
+            className="bg-green-600 text-white hover:bg-green-700"
           >
             Pay Now
             <ArrowUpRight data-icon="inline-end" />

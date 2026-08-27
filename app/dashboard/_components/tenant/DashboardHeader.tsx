@@ -1,4 +1,3 @@
-// app/dashboard/tenant/_components/DashboardHeader.tsx
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'

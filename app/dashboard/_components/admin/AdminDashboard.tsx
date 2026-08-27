@@ -2,28 +2,27 @@ import { Building2, ClipboardList, Users } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { IProperty, IRentalRequest } from '@/lib/types'
 import { UsersSection } from './UsersSection'
-import { ListingsSection } from './ListingsSection'
 import { RentalsSection } from './RentalsSection'
 import { AdminUserRecord } from '../../_actions/adminActions'
 import { getMe } from '@/service/getMe'
+import { ListingsSection } from './ListingsSection'
 
 export async function AdminDashboard({
-  users,
+ users,
   properties,
   rentals,
+  userName,
 }: {
   users: AdminUserRecord[]
   properties: IProperty[]
   rentals: IRentalRequest[]
+  userName?: string
 }) {
   const stats = [
     { label: 'Total users', value: users.length, detail: 'Tenants & landlords', icon: Users },
     { label: 'Total listings', value: properties.length, detail: 'Across all landlords', icon: Building2 },
     { label: 'Total rentals', value: rentals.length, detail: 'All requests to date', icon: ClipboardList },
   ]
-
-    const user = await getMe();
-    const userName =  user.data.result.name;
 
   return (
     <main className="w-full p-4 py-8 sm:p-6 lg:p-8">

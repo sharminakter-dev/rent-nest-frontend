@@ -18,7 +18,7 @@ Maps every frontend component/action to the backend endpoint it consumes. All re
 
 | Frontend | Method | Endpoint | Notes |
 |---|---|---|---|
-| Properties list page | GET | `/api/properties` | Supports `searchTerm`, `location`, `minRent`, `maxRent`, `bedrooms`, `bathrooms`, `type` (category slug), `isFeatured`, `isAvailable`, `sortBy`, `sortOrder`, `page`, `limit` query params |
+| Properties list page | GET | `/api/properties` | Supports `searchTerm`, `location`, `minRent`, `maxRent`, `bedrooms`, `bathrooms`, `type` (category slug), `isFeatured`, `isAvailable`, `sortBy`, `sortOrder`, `page`, `limit` query params. **Advanced filter UI not yet built** — backend supports all of these, frontend doesn't send them yet. |
 | `getPropertyById()` (`_actions/propertyActions.ts`) → `PropertiesByIdPage` | GET | `/api/properties/:id` | |
 | `getAllCategories()` / `getAllCategoriesFull()` (`_actions/propertyActions.ts`) → `PropertyForm` (category `<Select>`) | GET | `/api/categories` | `getAllCategories` returns slugs only (`string[]`); `getAllCategoriesFull` returns full `ICategory[]` — form needs the full version to auto-fill `name`/`description` hidden fields |
 
@@ -28,6 +28,7 @@ Maps every frontend component/action to the backend endpoint it consumes. All re
 |---|---|---|---|
 | `requestProperty()` (`_actions/rentalActions.ts`) → `RequestPropertyDialog` | POST | `/api/rentals` | Body: `{propertyId, startDate, durationMonths, message}` |
 | `getMyRentals()` (`app/dashboard/tenant/_actions/tenantActions.ts`) → `RequestsSection` | GET | `/api/rentals` | Returns requests with nested `property {title, isAvailable}`, `tenant {name}`, `review {rating} \| null` |
+| `cancelRentalRequest()` → `RequestRow` (Cancel button) | — | `/api/rentals/:id` (assumed — confirm method/path) | Shown only while `canCancelRequest(status)` — needs backend verification |
 
 ## Payments — Tenant
 
@@ -42,33 +43,63 @@ Maps every frontend component/action to the backend endpoint it consumes. All re
 
 | Frontend | Method | Endpoint | Notes |
 |---|---|---|---|
-| `submitReview()` (`app/dashboard/tenant/_actions/reviewActions.ts`) → `LeaveReviewDialog` | POST | `/api/reviews` | Body: `{rentalId, rating, comment}`; shown only when `status` is `ACTIVE`/`COMPLETED` and no review exists yet |
+| `submitReview()` (`app/dashboard/tenant/_actions/reviewActions.ts`) → `ReviewDialog` | POST | `/api/reviews` | Body: `{rentalId, rating, comment}`; shown only when `status` is `ACTIVE`/`COMPLETED` and no review exists yet |
 
 ## Landlord
 
 | Frontend | Method | Endpoint | Notes |
 |---|---|---|---|
-| `getMyProperties()` (`app/dashboard/_actions/landlordActions.ts`) → `LandlordPropertiesPage`, `PropertyRow`, edit page prefill | GET | `/api/landlord` | ⚠️ Not nested under `/landlord/properties` like the others — confirm this isn't a typo |
-| `createProperty()` → `PropertyForm` (create mode) | POST | `/api/landlord/properties` | Body requires nested `category: {slug, name, description}` — backend `upsert`s by slug; sending only `slug` with empty `name`/`description` will error if the slug doesn't already exist |
-| `updateProperty()` → `PropertyForm` (edit mode) | PATCH | `/api/landlord/properties/:id` | Body: `{title?, description?, image?, rent, isAvailable}` — only these fields are accepted per `IUdateProertyPayload`; `location`/`bedrooms`/`bathrooms`/`category` are **not** editable via this endpoint currently |
+| `getMyProperties()` (`app/dashboard/_actions/landlordActions.ts`) → `LandlordPropertiesPage`, `PropertyRow`, edit page prefill, `LandlordDashboard` overview | GET | `/api/landlord` | ⚠️ Not nested under `/landlord/properties` like the others — confirmed intentional, not a typo, per backend service review |
+| `createProperty()` → `PropertyForm` (create mode) | POST | `/api/landlord/properties` | Body requires nested `category: {slug, name, description}` — backend `upsert`s by slug; form auto-fills `name`/`description` via hidden inputs sourced from `getAllCategoriesFull()` |
+| `updateProperty()` → `PropertyForm` (edit mode) | PATCH | `/api/landlord/properties/:id` | Body: `{title?, description?, image?, rent, isAvailable}` (`isAvailable` required, rest optional per `IUdateProertyPayload`) — `location`/`bedrooms`/`bathrooms`/`categoryId` are **not** wired into the edit form yet, though the backend interface now accepts them |
 | `deleteProperty()` → `PropertyRow` | DELETE | `/api/landlord/properties/:id` | Confirm dialog before calling |
-| `getMyRequests()` (`app/dashboard/landlord/requests/`) → `RequestsPageContent` | GET | `/api/landlord/requests` | Returns `tenant {id, name, email}`, `property {id, title, rent}` |
-| `updateRequestStatus()` → `RequestsPageContent` (Approve/Reject buttons) | PATCH | `/api/landlord/requests/:id` | Body: `{status: "APPROVED" \| "REJECTED"}` — do **not** send `"ACTIVE"`, that transition happens automatically via the payment webhook |
+| `getMyRequests()` (`app/dashboard/landlord/requests/`) → `RequestActionRow` | GET | `/api/landlord/requests` | Returns `tenant {id, name, email}`, `property {id, title, rent}` |
+| `updateRequestStatus()` → `RequestActionRow` (Approve/Reject buttons) | PATCH | `/api/landlord/requests/:id` | Body: `{status: "APPROVED" \| "REJECTED"}` — do **not** send `"ACTIVE"`, that transition happens automatically via the payment webhook |
 | `getMyReviews()` → `LandlordReviewsPage` | GET | `/api/landlord/reviews` | Reviews across all of the landlord's properties |
 
-## Admin — *not yet built*
+## Admin
 
 | Frontend | Method | Endpoint | Notes |
 |---|---|---|---|
-| `/dashboard/admin` overview | GET | `/api/admin/users` | Also needs a properties/requests overview source — endpoint TBD |
-| User ban/unban action | PATCH | `/api/admin/users/:id` | Payload shape unconfirmed — likely `{status: "ACTIVE" \| "BANNED"}` per the `UserStatus` enum |
+| `getAllUsers()` (`app/dashboard/_actions/adminActions.ts`) → `UsersSection` | GET | `/api/admin/users` | Returns `AdminUserRecord[]` — profile, role, status, phone, etc. **No search/pagination UI or query params sent yet** — spec requires both. |
+| `getAllProperties()` → `ListingsSection` | GET | `/api/admin/properties` | Platform-wide listing view, read-only |
+| `getAllRentals()` → `RentalsSection` | GET | `/api/admin/rentals` | Platform-wide rental request view, read-only |
+| `updateUserStatus()` → `UsersSection` (Ban/Reactivate buttons) | PATCH | `/api/admin/users/:id` | Body: `{status: "ACTIVE" \| "BANNED"}`; revalidates `/dashboard/admin` on success |
+| `AdminDashboard` (`app/dashboard/admin/_components/AdminDashboard.tsx`) | — | — | `AdminDashboardPage` fetches all three lists + `getMe()` in parallel via `Promise.all` |
+
+⚠️ **Endpoints are wired up in code but responses haven't been verified against real Postman samples yet** (unlike tenant/landlord, which were confirmed against actual payloads throughout development).
+
+**Not yet built:** content-moderation *write* actions (force-unlisting a property, removing a rental request) — `ListingsSection`/`RentalsSection` are read-only views only.
+
+---
+
+## Loading & error states
+
+| Route | `loading.tsx` | `error.tsx` |
+|---|---|---|
+| `/properties/[id]` | ✅ | inherits root |
+| `/properties` (list) | should add | inherits root |
+| `/dashboard/tenant` | ✅ | inherits `/dashboard` |
+| `/dashboard/landlord` | ✅ | inherits `/dashboard` |
+| `/dashboard/landlord/properties` | ✅ | inherits `/dashboard` |
+| `/dashboard/landlord/requests` | ✅ | inherits `/dashboard` |
+| `/dashboard/admin` | ✅ | inherits `/dashboard` (or own, optional) |
+| `/payment/success` | should add | inherits root |
+| `app/dashboard/*` (all dashboard routes) | — | ✅ `app/dashboard/error.tsx` — keeps sidebar mounted |
+| Everything else | — | ✅ `app/error.tsx` root fallback |
+
+**Client-side action error handling**: server actions invoked directly from client components (`PropertyRow.handleDelete`, `RequestActionRow.handleAction`, `UsersSection.handleStatus`, `RequestRow.handleCancel`) should each wrap their `await` in `try/catch` — a thrown error (network failure, non-JSON response) inside an event handler is **not** caught by React error boundaries, so without explicit `try/catch` the user gets silent failure (stuck loading state, no toast) rather than feedback. Confirm this pattern is applied to all four call sites.
 
 ---
 
 ## Known open items
 
-- **`getMyProperties()` hits `/api/landlord`** while every sibling landlord action is nested under `/api/landlord/properties` or `/api/landlord/requests` — verify this is intentional.
-- **`updateProperty` currently sends `PUT` in one version, `PATCH` in another** across this codebase's history — confirm which the backend route actually registers before shipping.
-- **Category editing on update is unresolved**: `createProperty` uses a nested `category` object (upserted by slug), but `updateProperty`'s Prisma call would need a flat `categoryId` FK — these two are not symmetric, and update-time category changes aren't wired up yet.
-- **Admin endpoints are unconfirmed** — no sample requests/responses have been tested yet for `/api/admin/users`.
-- **Ownership/authorization gaps found during backend review** (should be fixed before ship): `getPaymentById` allowed any tenant to fetch any payment by ID; `updateRentalStatus` initially had no landlord-ownership check; `POST /api/payments/create`'s route allowed `LANDLORD` role through despite the service rejecting it.
+- **`updateProperty` HTTP method drift** — confirm the backend route registers `PATCH` (not `PUT`) before shipping; both appeared at different points in development.
+- **Category editing on update is unresolved** — `createProperty` uses a nested `category` object (upserted by slug); `updateProperty`'s Prisma call takes a flat `categoryId` FK. These aren't symmetric, and category isn't currently editable via the edit form.
+- **`cancelRentalRequest`'s endpoint is unconfirmed** — referenced in `RequestRow` but never verified against a real backend route/payload in this document's history.
+- **Admin endpoints unverified** — `/api/admin/{users,properties,rentals}` and the ban/unban `PATCH` payload are wired in code but not confirmed against real responses.
+- **Ownership/authorization gaps found during backend review** (fix before ship): `getPaymentById` initially allowed any tenant to fetch any payment by ID; `updateRentalStatus` initially had no landlord-ownership check; `POST /api/payments/create`'s route allowed `LANDLORD` role through despite the service rejecting it. Fixes were proposed inline during development — confirm they made it into the deployed backend.
+- **Single image per property** — `Property.image` is `String?`, not an array/relation. A true multi-photo gallery on the details page isn't possible without a schema change (`images String[]` or a `PropertyImage` model). Current UI shows one image only.
+- **Advanced search/filter UI not built** — backend fully supports `searchTerm`/`location`/`minRent`/`maxRent`/`bedrooms`/`bathrooms`/`type`; no frontend filter bar sends these yet.
+- **Admin user table has no search or pagination** — spec requires both; `UsersSection` currently renders the full unfiltered list.
+- **Home page (`/`) with featured properties not built** — route table specifies `GET /api/properties` (likely `isFeatured=true`) powering a home page; development went straight to `/properties`.

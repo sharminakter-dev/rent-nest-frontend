@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 
 import { getMe } from "@/service/getMe";
 import Image from "next/image";
+import { EntityAvatar } from "@/components/entity-avatar";
 
 export const metadata = {
   title: "Profile Settings | RentNest",
@@ -37,7 +38,7 @@ export default async function Page() {
       ? "/dashboard/landlord"
       : userData?.role === "ADMIN"
         ? "/dashboard/admin"
-        : "/dashboard";
+        : "/";
 
   return (
     <main className="min-h-screen bg-muted/30 px-4 py-8 sm:px-6 lg:px-8">
@@ -66,17 +67,15 @@ export default async function Page() {
           <Card className="h-fit">
             <CardContent className="flex flex-col items-center gap-4 p-6 text-center">
               <div className="relative">
-                <Image
-                        src={
-                        userData?.profile?.profilePhoto ||
+                <EntityAvatar
+                src={
+                  userData?.profile?.profilePhoto ||
                         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop"
-                        }
-                        alt={userData?.name || "User"}
-                        width={96}
-                        height={96}
-                        unoptimized
-                        className="h-full w-full object-cover"
-                    />
+                }  
+                fallbackSeed={userData?.name ?? '?'}
+                alt={userData?.name || 'User'}
+                size={96}
+              />
                 <Button size="icon" variant="secondary" className="absolute -bottom-1 -right-1 size-9 rounded-full" aria-label="Change profile photo">
                   <Camera />
                 </Button>

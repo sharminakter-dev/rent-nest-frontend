@@ -12,7 +12,7 @@ export default async function LandlordPropertiesPage() {
   const properties: IProperty[] = res?.data ?? []
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 mt-5">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">My properties</h1>
         <Button render={<Link href="/dashboard/landlord/properties/new" />} nativeButton={false}>
