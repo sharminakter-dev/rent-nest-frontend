@@ -1,5 +1,8 @@
 # RentNest — Frontend
 
+**Live demo:** [https://rentnest-frontend-beryl.vercel.app](https://rentnest-frontend-beryl.vercel.app)
+**Backend (production):** [https://rent-nest-psi-ten.vercel.app](https://rent-nest-psi-ten.vercel.app)
+
 A role-based rental marketplace built with Next.js App Router. Tenants browse and request properties, landlords manage listings and requests, admins moderate the platform. See [`API_INTEGRATION.md`](./API_INTEGRATION.md) for the full frontend-to-backend endpoint map.
 
 ## Tech stack
@@ -22,10 +25,31 @@ npm run dev
 
 ### Environment variables
 
+Local development (`.env.local`):
+```env
+# accessible from server components or server functions only
+BACKEND_API_URL=http://localhost:5000
+JWT_ACCESS_SECRET=<match backend's access token secret exactly>
+JWT_REFRESH_SECRET=<match backend's refresh token secret exactly>
+
+# accessible from the client and from server components/functions
+NEXT_PUBLIC_BACKEND_API_URL=http://localhost:5000
+```
+
+Production (Vercel project settings): same variable names, values pointing at the deployed backend —
+```env
+BACKEND_API_URL=https://rent-nest-psi-ten.vercel.app
+NEXT_PUBLIC_BACKEND_API_URL=https://rent-nest-psi-ten.vercel.app
+JWT_ACCESS_SECRET=<production secret — must match the deployed backend's, and should differ from the local dev secret>
+JWT_REFRESH_SECRET=<production secret — same requirement>
+```
+
 | Variable | Purpose |
 |---|---|
-| `BACKEND_API_URL` | Base URL of the backend API (e.g. `http://localhost:5000`) |
-| `JWT_ACCESS_SECRET` | Must match the backend's access token secret — used to verify/decode the `accessToken` cookie server-side (middleware, `getMe`, page-level role checks) |
+| `BACKEND_API_URL` | Server-only base URL of the backend API, used by every `_actions/*.ts` server action (`fetch` calls in `authHeaders()`-based requests) |
+| `JWT_ACCESS_SECRET` | Must match the backend's access token signing secret exactly — used to verify/decode the `accessToken` cookie server-side (`proxy.ts` middleware, `getMe`, page-level role checks) |
+| `JWT_REFRESH_SECRET` | Must match the backend's refresh token signing secret exactly — used by `proxy.ts` to verify the `refreshToken` cookie when silently refreshing an expired access token |
+| `NEXT_PUBLIC_BACKEND_API_URL` | Client-exposed backend URL (any `NEXT_PUBLIC_*` var is bundled into client JS and visible in the browser) — ⚠️ not currently referenced by any component built so far in this codebase; confirm whether this is intentionally reserved for future client-side `fetch` calls (e.g. a client component polling an endpoint directly) or safe to remove if unused |
 
 ### Available scripts
 
