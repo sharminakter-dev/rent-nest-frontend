@@ -4,7 +4,12 @@ import { JwtPayload } from "jsonwebtoken";
 import { jwtUtils } from './utils/jwt';
 import { getNewAccessToken } from './service/refreshToken';
 
-const AUTH_ROUTES = ["/auth/login", "/auth/register"];
+const AUTH_ROUTES = [
+    "/auth/login", 
+    "/auth/register",
+    "/about",
+    "/contact",
+];
 const PUBLIC_ROUTES = ["/", "/properties"];
 
 export async function proxy(request: NextRequest) {
