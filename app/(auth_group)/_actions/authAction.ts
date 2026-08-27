@@ -49,6 +49,9 @@ export const loginAction = async(redirectTo: string, prevState: LoginState, form
     });
 
     const result = await res.json();
+
+    console.log("LOGIN RESPONSE STATUS:", res.status);
+    console.log("LOGIN RESPONSE BODY:", JSON.stringify(result));
   
     if(result.success){
         const cookieStore = await cookies();
@@ -146,6 +149,9 @@ export const registerAction = async(redirectTo: string, prevState: RegisterState
     });
 
     const result = await res.json();
+
+    console.log("REGISTER RESPONSE STATUS:", res.status);
+    console.log("REGISTER RESPONSE BODY:", JSON.stringify(result));
   
     if(result.success){
         
