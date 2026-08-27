@@ -1,10 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
-import React from 'react'
-import RegisterForm from '../../_components/RegisterForm'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import LoginForm from '../_components/LoginForm'
 
-const RegisterPage = () => {
-   return (
+
+export default function LoginPage() {
+
+  return (
     <main className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Header */}
@@ -12,27 +13,28 @@ const RegisterPage = () => {
           <div className="inline-flex items-center justify-center size-12 rounded-lg bg-primary text-primary-foreground font-bold mb-4">
             RN
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome to RentNest</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome Back</h1>
           <p className="mt-2 text-muted-foreground">
-            Sign up to discover beautiful rental properties from trusted landlords
+            Sign in to your RentNest account
           </p>
         </div>
 
-        {/* Register Card */}
+        {/* Login Card */}
         <Card className="border-border shadow-lg">
           <CardHeader className="space-y-1 ">
-            <CardTitle className='text-center '>Sign up</CardTitle>
+            <CardTitle className='text-center '>Sign In</CardTitle>
             {/* <hr /> */}
           </CardHeader>
 
           <CardContent>
-            <RegisterForm/>
+           <LoginForm/>
+           
           </CardContent>
         </Card>
 
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          By signing up, you agree to our{' '}
+          By signing in, you agree to our{' '}
           <Link href="#" className="hover:underline">
             Terms of Service
           </Link>{' '}
@@ -45,5 +47,3 @@ const RegisterPage = () => {
     </main>
   )
 }
-
-export default RegisterPage
