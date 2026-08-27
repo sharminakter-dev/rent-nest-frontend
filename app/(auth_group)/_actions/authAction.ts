@@ -49,9 +49,6 @@ export const loginAction = async(redirectTo: string, prevState: LoginState, form
     });
 
     const result = await res.json();
-
-    console.log("LOGIN RESPONSE STATUS:", res.status);
-    console.log("LOGIN RESPONSE BODY:", JSON.stringify(result));
   
     if(result.success){
         const cookieStore = await cookies();
@@ -130,7 +127,6 @@ export const registerAction = async(redirectTo: string, prevState: RegisterState
         };
     }
 
-
     const payload = {
         name,
         email, 
@@ -150,11 +146,22 @@ export const registerAction = async(redirectTo: string, prevState: RegisterState
 
     const result = await res.json();
 
-    console.log("REGISTER RESPONSE STATUS:", res.status);
-    console.log("REGISTER RESPONSE BODY:", JSON.stringify(result));
-  
     if(result.success){
-        
+        const cookieStore = await cookies();
+
+        cookieStore.set("accessToken", result.data.accessToken, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24,
+            sameSite: "lax"
+        });
+
+        cookieStore.set("refreshToken", result.data.refreshToken, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+            sameSite: "lax"
+        });
+
+        revalidatePath("/", "layout")
 
         if(redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")){
             redirect(redirectTo);
@@ -167,9 +174,7 @@ export const registerAction = async(redirectTo: string, prevState: RegisterState
         }else if(role === "ADMIN"){
             redirect("/dashboard/admin", "replace");
         }
-
     }
 
     return result;
-
 }
